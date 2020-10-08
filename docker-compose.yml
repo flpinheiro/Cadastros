@@ -1,0 +1,50 @@
+version: "3.8"
+
+networks: 
+    localdev:
+        name: localdev
+
+services: 
+    main-api:
+        build: ./ws-cadastros/.
+        container_name: ws-cadastro
+        ports:
+            - "5000:80"
+            - "5001:443"
+        restart: always
+        depends_on: 
+            - sql-server
+        networks: 
+            - localdev
+
+    sql-server:
+        image: danrleywillyan/sqlserver-compulog:version1.0
+        container_name: sql-server
+        environment: 
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=<DW@letsCod3H4rd>
+            - MSSQL_TCP_PORT=1433
+        ports:
+            - 1433:1433
+        networks: 
+            - localdev
+
+    react-ui:
+        container_name: react-ui
+        build: 
+            context: ./web-cadastro/.
+            dockerfile: Dockerfile
+        volumes: 
+            - ".:/app"
+            - "/app/node_modules"
+        ports:
+            - 3001:80
+        environment: 
+            - CHOKIDAR_USEPOLLING=true
+        networks: 
+            - localdev
+        depends_on: 
+            - main-api
+
+
+
