@@ -2,7 +2,7 @@ version: "3.3"
 
 networks: 
     localdev:
-        name: localdev
+        driver: bridge
 
 services: 
     main-api:
